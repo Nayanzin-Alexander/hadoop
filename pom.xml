@@ -9,6 +9,7 @@
     <version>0.0.1</version>
     <modules>
         <module>salespercountry</module>
+        <module>invertedindex</module>
     </modules>
 
     <properties>
@@ -43,6 +44,13 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.assertj/assertj-core -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.13.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

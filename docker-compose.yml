@@ -1,0 +1,54 @@
+#   video tutorial on https://www.youtube.com/watch?v=dLTI2HN9Ejg
+#  "Building Hadoop Cluster Using Docker | Apache Hadoop Cluster Using Docker Compose"
+#   example from https://github.com/big-data-europe/docker-hadoop
+
+version: "3"
+
+services:
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.1.2-java8
+    container_name: namenode
+    ports:
+      - 9870:9870
+    volumes:
+      - ./env/hadoop_namenode:/hadoop/dfs/name
+    environment:
+      - CLUSTER_NAME=test
+    env_file:
+      - ./env/hadoop.env
+
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.1.2-java8
+    container_name: datanode
+    volumes:
+      - ./env/hadoop_datanode:/hadoop/dfs/data
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870"
+    env_file:
+      - ./env/hadoop.env
+
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.1.2-java8
+    container_name: resourcemanager
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870 datanode:9864"
+    env_file:
+      - ./env/hadoop.env
+
+  nodemanager1:
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.1.2-java8
+    container_name: nodemanager
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870 datanode:9864 resourcemanager:8088"
+    env_file:
+      - ./env/hadoop.env
+
+  historyserver:
+    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.1.2-java8
+    container_name: historyserver
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870 datanode:9864 resourcemanager:8088"
+    volumes:
+      - ./env/hadoop_historyserver:/hadoop/yarn/timeline
+    env_file:
+      - ./env/hadoop.env

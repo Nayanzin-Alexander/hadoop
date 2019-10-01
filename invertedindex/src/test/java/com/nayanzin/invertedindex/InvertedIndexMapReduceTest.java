@@ -2,7 +2,7 @@ package com.nayanzin.invertedindex;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mrunit.MapDriver;
+import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
 import org.apache.hadoop.mrunit.types.Pair;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,53 +14,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class InvertedIndexMapReduceTest {
 
-    private MapDriver<LongWritable, Text, Text, Text> mapDriver;
+    private MapReduceDriver<LongWritable, Text, Text, Text, Text, Text> driver;
 
     @Before
     public void setUp() {
-        InvertedIndexMapper mapper = new InvertedIndexMapper();
-        mapDriver = MapDriver.newMapDriver(mapper);
+        driver = new MapReduceDriver<>(new InvertedIndexMapper(), new InvertedIndexReducer());
     }
 
     @Test
-    public void mapTestWithSingleKeyAndValue() {
-        mapDriver.withInput(new LongWritable(), new Text("www.kohls.com,clothes"));
-        mapDriver.withOutput(new Text("clothes"), new Text("www.kohls.com"));
-        mapDriver.runTest();
-    }
+    public void mapReduceTest() throws IOException {
+        driver.withInput(new LongWritable(), new Text("www.kohls.com,clothes,shoes,beauty,toys"));
+        driver.withInput(new LongWritable(), new Text("www.macys.com,shoes,clothes,toys,jeans,sweaters"));
 
-    @Test
-    public void mapTestWithSingleKeyAndValueWithAssertion() throws IOException {
-        final LongWritable inputKey = new LongWritable(0);
-        final Text inputValue = new Text("www.kohls.com,clothes");
-        final Text outputKey = new Text("clothes");
-        final Text outputValue = new Text("www.kohls.com");
+        final List<Pair<Text, Text>> result = driver.run();
 
-        mapDriver.withInput(inputKey, inputValue);
-        final List<Pair<Text, Text>> result = mapDriver.run();
+        final Pair<Text, Text> clothes = new Pair<>(new Text("clothes"), new Text("www.kohls.com,www.macys.com"));
+        final Pair<Text, Text> shoes = new Pair<>(new Text("shoes"), new Text("www.kohls.com,www.macys.com"));
+        final Pair<Text, Text> beauty = new Pair<>(new Text("beauty"), new Text("www.kohls.com"));
+        final Pair<Text, Text> toys = new Pair<>(new Text("toys"), new Text("www.kohls.com,www.macys.com"));
+        final Pair<Text, Text> jeans = new Pair<>(new Text("jeans"), new Text("www.macys.com"));
+        final Pair<Text, Text> sweaters = new Pair<>(new Text("sweaters"), new Text("www.macys.com"));
 
         assertThat(result)
                 .isNotNull()
-                .hasSize(1)
-                .containsExactly(new Pair<>(outputKey, outputValue));
+                .hasSize(6)
+                .containsExactlyInAnyOrder(clothes, shoes, beauty, toys, jeans, sweaters);
     }
-
-    @Test
-    public void mapTestWithSingleInputMultiplyOutput() throws IOException {
-        final LongWritable inputKey = new LongWritable(0);
-        final Text inputValue = new Text("www.kohls.com,clothes,shoes,beauty,toys");
-        final Pair clothes = new Pair<>(new Text("clothes"), new Text("www.kohls.com"));
-        final Pair shoes = new Pair<>(new Text("shoes"), new Text("www.kohls.com"));
-        final Pair beauty = new Pair<>(new Text("beauty"), new Text("www.kohls.com"));
-        final Pair toys = new Pair<>(new Text("toys"), new Text("www.kohls.com"));
-        mapDriver.withInput(inputKey, inputValue);
-        final List<Pair<Text, Text>> result = mapDriver.run();
-
-        assertThat(result)
-                .isNotNull()
-                .hasSize(4)
-                .containsExactlyInAnyOrder(clothes, shoes, beauty, toys);
-    }
-
-
 }

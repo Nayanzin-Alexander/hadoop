@@ -9,6 +9,7 @@ import org.apache.hadoop.mrunit.ReduceDriver;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -30,7 +31,7 @@ public class SalesCountryMapReducerTest {
     }
 
     @Test
-    public void testMapper() {
+    public void testMapper() throws IOException {
         mapDriver.withInput(new LongWritable(),
                 new Text("1/2/09 6:17,Product1,1200,Mastercard,carolina,Basildon,England,United Kingdom,1/2/09 6:00,1/2/09 6:08,51.5,-1.1166667"));
         mapDriver.withOutput(new Text("United Kingdom"), new IntWritable(1));
@@ -38,7 +39,7 @@ public class SalesCountryMapReducerTest {
     }
 
     @Test
-    public void testReducer() {
+    public void testReducer() throws IOException {
         List<IntWritable> values = IntStream
                 .range(0, 10)
                 .mapToObj(i -> new IntWritable(1))
@@ -49,7 +50,7 @@ public class SalesCountryMapReducerTest {
     }
 
     @Test
-    public void testMapReducer() {
+    public void testMapReducer() throws IOException {
         mapReduceDriver.withInput(new LongWritable(),
                 new Text("1/2/09 6:17,Product1,1200,Mastercard,carolina,Basildon,England,United Kingdom,1/2/09 6:00,1/2/09 6:08,51.5,-1.1166667"));
         mapReduceDriver.withOutput(new Text("United Kingdom"), new IntWritable(1));

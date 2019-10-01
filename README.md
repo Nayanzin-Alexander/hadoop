@@ -12,18 +12,17 @@
 ##### Copy data into HDFS
 * docker cp ./env/temp/SalesJan2009.csv namenode:/temp/
 * docker exec -it namenode /bin/bash
-* hdfs dfs -mkdir /input
-* hdfs dfs -put /temp/SalesJan2009.csv /user/root/input
+* hdfs dfs -mkdir /salespercountry/input
+* hdfs dfs -put /temp/SalesJan2009.csv /user/root/salespercountry/input
 
 ##### Package job to JAR
 * mvn -pl salespercountry/ clean package
 
 ##### Run the job
-* docker cp ./target/ namenode:/tmp/
 * docker cp ./salespercountry/target/salespercountry-0.0.1.jar namenode:/temp/
 * docker exec -it namenode /bin/bash
-* hadoop jar temp/salespercountry-0.0.1.jar input output/report
+* hadoop jar temp/salespercountry-0.0.1.jar salespercountry/input salespercounty/report
 
 ##### Copy report on the local machine
-* hdfs dfs -get /user/root/output/report /temp/
+* hdfs -dfs get /user/root/salespercountry/report /temp/salespercountryreport
 * docker cp namenode:/temp/report ./env/temp/report

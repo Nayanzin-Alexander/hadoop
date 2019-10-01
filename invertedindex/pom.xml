@@ -20,7 +20,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.nayanzin.hadoop.invertedindex.InvertedIndexDriver</mainClass>
+                            <mainClass>com.nayanzin.invertedindex.InvertedIndexDriver</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

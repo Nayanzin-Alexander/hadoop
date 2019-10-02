@@ -10,6 +10,8 @@
     <modules>
         <module>salespercountry</module>
         <module>invertedindex</module>
+        <module>urlcat</module>
+        <module>filecopy</module>
     </modules>
 
     <properties>

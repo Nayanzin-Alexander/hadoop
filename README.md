@@ -5,7 +5,7 @@
 * Hadoop ecosystem overview https://www.guru99.com/create-your-first-hadoop-program.html
 * Testing http://m-mansur-ashraf.blogspot.com/2013/02/testing-mapreduce-with-mrunit.html
 
-### Helpful commands:
+### Usage
 ##### Start the hadoop
 * docker-compose up -d
 
@@ -26,3 +26,22 @@
 ##### Copy report on the local machine
 * hdfs -dfs get /user/root/salespercountry/report /temp/salespercountryreport
 * docker cp namenode:/temp/report ./env/temp/report
+
+#### Usage of URLCat jar
+* mvn -pl urlcat/ clean package
+* docker cp ./urlcat/target/urlcat-0.0.1.jar namenode:/temp/
+* hadoop jar /temp/urlcat-0.0.1.jar hdfs:/user/root/salespercountry/input/SalesJan2009.csv
+
+#### Usage of filecopy jar
+TODO finish. Page 57
+
+### Helpful commands
+####HDFS
+* -copyFromLocal
+* -copyToLocal
+* -ls -l.
+* -mkdir
+* distcp
+* archive -archiveName files.har /my/files /my
+
+####Hadoop I/O
